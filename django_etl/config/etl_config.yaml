@@ -1,0 +1,31 @@
+databases:
+  legacy:
+    database: uhms_legacy
+    engine: mysql
+    host: localhost
+    password: password
+    port: 3306
+    username: root
+  target:
+    database: uhms_new
+    engine: postgresql
+    host: localhost
+    password: password
+    port: 5432
+    username: postgres
+environment: development
+logging:
+  console_output: true
+  file_path: /var/log/etl/etl.log
+  level: INFO
+monitoring:
+  alert_on_errors: true
+  enable_metrics: true
+  enable_profiling: true
+project_name: UHMS-ETL
+transformation:
+  batch_size: 1000
+  enable_validation: true
+  max_retries: 3
+  retry_delay: 5
+  validation_mode: strict

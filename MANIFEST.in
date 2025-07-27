@@ -1,0 +1,8 @@
+include README.md
+include LICENSE
+include CHANGELOG.md
+recursive-include django_etl/templates *
+recursive-include django_etl/static *
+recursive-include django_etl/management *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
