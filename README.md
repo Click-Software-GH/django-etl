@@ -35,22 +35,22 @@ A comprehensive, production-ready ETL (Extract, Transform, Load) framework for D
 
 ```bash
 # Install latest version
-pip install git+https://github.com/Lsoldo-DEV/django-etl-framework.git
+pip install git+https://github.com/Click-Software-GH/django-etl.git
 
 # Install specific version/branch
-pip install git+https://github.com/Lsoldo-DEV/django-etl-framework.git@v1.0.0
-pip install git+https://github.com/Lsoldo-DEV/django-etl-framework.git@main
+pip install git+https://github.com/Click-Software-GH/django-etl.git@v1.0.0
+pip install git+https://github.com/Click-Software-GH/django-etl.git@main
 
 # Install with extra dependencies
-pip install "git+https://github.com/Lsoldo-DEV/django-etl-framework.git[database,monitoring]"
+pip install "git+https://github.com/Click-Software-GH/django-etl.git[database,monitoring]"
 ```
 
 ### Install for Development
 
 ```bash
 # Clone the repository
-git clone https://github.com/Lsoldo-DEV/django-etl-framework.git
-cd django-etl-framework
+git clone https://github.com/Click-Software-GH/django-etl.git
+cd django-etl
 
 # Install in editable mode
 pip install -e .
@@ -70,14 +70,46 @@ INSTALLED_APPS = [
     'django_etl',  # Add the ETL framework
 ]
 
-# Optional: Configure ETL settings
+# Configure your databases (ETL will use these)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'uhms_new',
+        'HOST': 'localhost',
+        'PORT': 5432,
+        'USER': 'postgres',
+        'PASSWORD': 'password',
+    },
+    'legacy': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'uhms_legacy',
+        'HOST': 'localhost',
+        'PORT': 3306,
+        'USER': 'root',
+        'PASSWORD': 'password',
+    }
+}
+
+# ETL Framework Configuration
 ETL_CONFIG = {
-    'DEFAULT_BATCH_SIZE': 1000,
-    'ENABLE_VALIDATION': True,
-    'ENABLE_PROFILING': True,
+    'PROJECT_NAME': 'UHMS-ETL',
+    'TRANSFORMATION': {
+        'BATCH_SIZE': 1000,
+        'ENABLE_VALIDATION': True,
+        'VALIDATION_MODE': 'strict',
+    },
+    'LOGGING': {
+        'LEVEL': 'INFO',
+        'CONSOLE_OUTPUT': True,
+    },
+    'MONITORING': {
+        'ENABLE_PROFILING': True,
+        'ENABLE_METRICS': True,
+    },
     'TRANSFORMER_DISCOVERY_PATHS': [
         'myapp.transformers',
     ],
+    'REQUIRED_DATABASES': ['default', 'legacy'],
 }
 ```
 
@@ -92,6 +124,7 @@ python manage.py migrate django_etl
 ```python
 # myapp/transformers/patient_transformer.py
 from django_etl import BaseTransformer
+from django.db import connections
 from myapp.models import Patient
 from legacy.models import LegacyPatient
 
@@ -104,7 +137,7 @@ class PatientTransformer(BaseTransformer):
         self.description = "Transform legacy patient data"
     
     def get_source_data(self):
-        """Get legacy patient data"""
+        """Get legacy patient data from configured legacy database"""
         return LegacyPatient.objects.using('legacy').all()
     
     def transform_batch(self, batch):
@@ -130,7 +163,7 @@ class PatientTransformer(BaseTransformer):
         return patients
     
     def save_batch(self, transformed_batch):
-        """Save transformed patients"""
+        """Save transformed patients to default database"""
         Patient.objects.bulk_create(transformed_batch, ignore_conflicts=True)
         return len(transformed_batch)
     
@@ -187,7 +220,7 @@ python manage.py migrate_legacy_data --only patients,appointments
 # Dry run (no database changes)
 python manage.py migrate_legacy_data --dry-run
 
-# With enhanced features
+# With configuration from Django settings
 python manage.py migrate_legacy_data \
     --enable-rollback \
     --enable-validation \
@@ -272,9 +305,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Links
 
-- **Repository**: [https://github.com/Lsoldo-DEV/django-etl-framework](https://github.com/Lsoldo-DEV/django-etl-framework)
-- **Issues**: [GitHub Issues](https://github.com/Lsoldo-DEV/django-etl-framework/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/Lsoldo-DEV/django-etl-framework/discussions)
+- **Repository**: [https://github.com/Click-Software-GH/django-etl](https://github.com/Click-Software-GH/django-etl)
+- **Issues**: [GitHub Issues](https://github.com/Click-Software-GH/django-etl/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Click-Software-GH/django-etl/discussions)
 
 ## 📞 Support
 
