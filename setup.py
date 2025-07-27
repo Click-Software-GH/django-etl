@@ -26,7 +26,7 @@ setup(
     description="A comprehensive Django-based ETL framework with advanced features",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/django-etl-framework",
+    url="https://github.com/Click-Software-GH/django-etl",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -116,8 +116,8 @@ setup(
         "batch-processing",
     ],
     project_urls={
-        "Bug Reports": "https://github.com/yourusername/django-etl-framework/issues",
-        "Source": "https://github.com/yourusername/django-etl-framework",
-        "Documentation": "https://django-etl-framework.readthedocs.io/",
+        "Bug Reports": "https://github.com/Click-Software-GH/django-etl/issues",
+        "Source": "https://github.com/Click-Software-GH/django-etl",
+        # "Documentation": "https://django-etl-framework.readthedocs.io/",
     },
 )
