@@ -15,6 +15,49 @@ import json
 from .models import MigrationLog, MigrationRunSummary
 
 
+class TransformerListFilter(admin.SimpleListFilter):
+    """Custom filter for transformer names"""
+
+    title = "transformer"
+    parameter_name = "transformer"
+
+    def lookups(self, request, model_admin):
+        transformers = MigrationLog.objects.values_list(
+            "transformer", flat=True
+        ).distinct()
+        return [
+            (transformer, transformer) for transformer in transformers if transformer
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(transformer=self.value())
+        return queryset
+
+
+class DurationListFilter(admin.SimpleListFilter):
+    """Custom filter for migration duration"""
+
+    title = "duration"
+    parameter_name = "duration"
+
+    def lookups(self, request, model_admin):
+        return [
+            ("fast", "Fast (< 30s)"),
+            ("medium", "Medium (30s - 5m)"),
+            ("slow", "Slow (> 5m)"),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == "fast":
+            return queryset.filter(duration_seconds__lt=30)
+        elif self.value() == "medium":
+            return queryset.filter(duration_seconds__gte=30, duration_seconds__lt=300)
+        elif self.value() == "slow":
+            return queryset.filter(duration_seconds__gte=300)
+        return queryset
+
+
 @admin.register(MigrationLog)
 class MigrationLogAdmin(admin.ModelAdmin):
     """
@@ -36,8 +79,8 @@ class MigrationLogAdmin(admin.ModelAdmin):
         "success",
         "dry_run",
         "run_at",
-        ("transformer", admin.SimpleListFilter),
-        ("duration_seconds", admin.SimpleListFilter),
+        TransformerListFilter,
+        DurationListFilter,
     ]
 
     search_fields = [
