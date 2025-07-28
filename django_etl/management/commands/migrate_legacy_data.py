@@ -182,10 +182,6 @@ class Command(BaseCommand):
         # Setup logging
         logger = self.setup_logging(log_file, log_level)
 
-        # Set discovery logger to INFO to see detailed discovery output
-        discovery_logger = logging.getLogger("django_etl.discovery")
-        discovery_logger.setLevel(logging.INFO)
-
         # Log migration start with enhanced features
         mode = "DRY RUN" if dry_run else "LIVE"
         logger.info(f"Starting enhanced ETL migration in {mode} mode")
