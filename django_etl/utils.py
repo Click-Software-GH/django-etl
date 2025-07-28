@@ -16,7 +16,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings.local")
 django.setup()
 
 from django.db import connections
-from migration_core.etl_helpers import DataCleaner, HashGenerator
+from .helpers import DataCleaner, HashGenerator
 import argparse
 import json
 
