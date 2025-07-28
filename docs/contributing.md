@@ -142,6 +142,7 @@ We especially welcome contributions related to:
 from typing import List, Optional
 from django_etl import BaseTransformer
 
+
 class PatientTransformer(BaseTransformer):
     """Transform patient data from legacy system to new format.
     
@@ -152,7 +153,7 @@ class PatientTransformer(BaseTransformer):
         batch_size: Number of records to process in each batch
         description: Human-readable description of the transformer
     """
-    
+
     def __init__(self) -> None:
         super().__init__()
         self.batch_size = 1000
@@ -192,6 +193,7 @@ class PatientTransformer(BaseTransformer):
     
     def _extract_patient_data(self, legacy_patient: LegacyPatient) -> dict:
         """Extract and clean patient data from legacy record."""
+
         # Implementation details...
         pass
 ```
@@ -214,15 +216,17 @@ from django_etl.config import ETLConfigManager
 
 class TestETLConfigManager(TestCase):
     """Test ETL configuration management."""
-    
+
     def setUp(self):
         """Set up test fixtures."""
+
         self.config_manager = ETLConfigManager()
     
     def test_get_database_config_existing(self):
         """Test getting configuration for existing database."""
+
         # Arrange
-        db_name = 'default'
+        db_name = "default"
         
         # Act
         config = self.config_manager.get_database_config(db_name)
@@ -233,8 +237,9 @@ class TestETLConfigManager(TestCase):
     
     def test_get_database_config_missing(self):
         """Test getting configuration for non-existent database."""
+
         # Arrange
-        db_name = 'nonexistent'
+        db_name = "nonexistent"
         
         # Act
         config = self.config_manager.get_database_config(db_name)
@@ -248,6 +253,7 @@ class TestETLConfigManager(TestCase):
     ])
     def test_batch_size_configuration(self, batch_size, expected):
         """Test batch size configuration with various values."""
+
         # Test implementation...
         pass
 ```

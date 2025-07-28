@@ -13,14 +13,16 @@ from django.contrib.auth.models import User
 from myapp.models import Patient
 from legacy.models import LegacyPatient
 
+
 class PatientTransformer(BaseTransformer):
     """Migrate patient data from legacy system to new system"""
-    
+
     # Define which models this transformer affects (for rollback)
     affected_models = [Patient, User]
     
     def run(self):
         """Your transformation logic goes here"""
+
         self.log_info("Starting patient migration...")
         
         # Extract data from legacy database
@@ -31,6 +33,7 @@ class PatientTransformer(BaseTransformer):
     
     def process_patient_batch(self, legacy_patients):
         """Process a batch of legacy patients"""
+
         new_patients = []
         
         for legacy_patient in legacy_patients:
@@ -204,6 +207,7 @@ from django_etl.validators import ValidationSeverity
 # Add custom validation rule
 def validate_age(date_of_birth):
     """Patients must be under 120 years old"""
+
     from datetime import date
     age = (date.today() - date_of_birth).days / 365.25
     return age < 120
@@ -364,11 +368,12 @@ for row in results:
 ```python
 def process_patient_batch(batch):
     """Process a batch of patient records"""
+
     patients = []
     for record in batch:
         patient = Patient(
-            first_name=record['first_name'],
-            last_name=record['last_name']
+            first_name=record["first_name"],
+            last_name=record["last_name"],
         )
         patients.append(patient)
     

@@ -66,28 +66,28 @@ monitoring:
 
 # Use Django's native database configuration
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'uhms_new',
-        'HOST': 'localhost',
-        'PORT': 5432,
-        'USER': 'postgres',
-        'PASSWORD': 'password',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "uhms_new",
+        "HOST": "localhost",
+        "PORT": 5432,
+        "USER": "postgres",
+        "PASSWORD": "password",
     },
-    'legacy': {
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'uhms_legacy',
-        'HOST': 'localhost',
-        'PORT': 3306,
-        'USER': 'root',
-        'PASSWORD': 'password',
-    }
+    "legacy": {
+        "ENGINE": "django.db.backends.mysql", 
+        "NAME": "uhms_legacy",
+        "HOST": "localhost",
+        "PORT": 3306,
+        "USER": "root",
+        "PASSWORD": "password",
+    },
 }
 
 # ETL-specific configuration
 ETL_CONFIG = {
-    'PROJECT_NAME': 'UHMS-ETL',
-    'ENVIRONMENT': 'development',
+    "PROJECT_NAME": "UHMS-ETL",
+    "ENVIRONMENT": "development",
     
     'TRANSFORMATION': {
         'BATCH_SIZE': 1000,

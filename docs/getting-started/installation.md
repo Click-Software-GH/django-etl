@@ -10,51 +10,51 @@ Get up and running with the Django ETL Framework in minutes.
 
 ## Installation Methods
 
-=== "From GitHub (Recommended)"
+### From GitHub (Recommended)
 
-    Install the latest version directly from GitHub:
+Install the latest version directly from GitHub:
 
-    ```bash
-    pip install git+https://github.com/Click-Software-GH/django-etl.git
-    ```
+```bash
+pip install git+https://github.com/Click-Software-GH/django-etl.git
+```
 
-    Install a specific version or branch:
+Install a specific version or branch:
 
-    ```bash
-    # Specific version
-    pip install git+https://github.com/Click-Software-GH/django-etl.git@v1.0.0
-    
-    # Main branch
-    pip install git+https://github.com/Click-Software-GH/django-etl.git@main
-    ```
+```bash
+# Specific version
+pip install git+https://github.com/Click-Software-GH/django-etl.git@v1.0.0
 
-=== "Development Installation"
+# Main branch
+pip install git+https://github.com/Click-Software-GH/django-etl.git@main
+```
 
-    For development or if you want to modify the framework:
+### Development Installation
 
-    ```bash
-    # Clone the repository
-    git clone https://github.com/Click-Software-GH/django-etl.git
-    cd django-etl
+For development or if you want to modify the framework:
 
-    # Install in editable mode
-    pip install -e .
-    ```
+```bash
+# Clone the repository
+git clone https://github.com/Click-Software-GH/django-etl.git
+cd django-etl
 
-=== "With Extra Dependencies"
+# Install in editable mode
+pip install -e .
+```
 
-    Install with additional features:
+### With Extra Dependencies
 
-    ```bash
-    # Database drivers
-    pip install "git+https://github.com/Click-Software-GH/django-etl.git[database]"
-    
-    # Monitoring tools
-    pip install "git+https://github.com/Click-Software-GH/django-etl.git[monitoring]"
-    
-    # All extras
-    pip install "git+https://github.com/Click-Software-GH/django-etl.git[database,monitoring,async]"
-    ```
+Install with additional features:
+
+```bash
+# Database drivers
+pip install "git+https://github.com/Click-Software-GH/django-etl.git[database]"
+
+# Monitoring tools
+pip install "git+https://github.com/Click-Software-GH/django-etl.git[monitoring]"
+
+# All extras
+pip install "git+https://github.com/Click-Software-GH/django-etl.git[database,monitoring,async]"
+```
 
 ## Extra Dependencies
 
@@ -76,7 +76,7 @@ Add the framework to your Django project:
 # settings.py
 INSTALLED_APPS = [
     # ... your existing apps
-    'django_etl',  # Add this line
+    "django_etl",  # Add this line
 ]
 ```
 
@@ -95,12 +95,12 @@ Add basic ETL configuration to your settings:
 ```python
 # settings.py
 ETL_CONFIG = {
-    'PROJECT_NAME': 'My ETL Project',
-    'TRANSFORMATION': {
-        'BATCH_SIZE': 1000,
-        'ENABLE_VALIDATION': True,
+    "PROJECT_NAME": "My ETL Project",
+    "TRANSFORMATION": {
+        "BATCH_SIZE": 1000,
+        "ENABLE_VALIDATION": True,
     },
-    'REQUIRED_DATABASES': ['default'],
+    "REQUIRED_DATABASES": ["default"],
 }
 ```
 

@@ -6,9 +6,9 @@ Get your first ETL transformation running in 5 minutes!
 
 Make sure you have:
 
-- [x] Django ETL Framework installed
-- [x] Framework added to `INSTALLED_APPS`
-- [x] Migrations run (`python manage.py migrate django_etl`)
+- Django ETL Framework installed
+- Framework added to `INSTALLED_APPS`
+- Migrations run (`python manage.py migrate django_etl`)
 
 !!! tip "Need help with installation?"
     Check our [Installation Guide](installation.md) if you haven't set up the framework yet.
@@ -20,28 +20,28 @@ Add your source and target databases to Django's `DATABASES` setting:
 ```python
 # settings.py
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'my_new_system',
-        'HOST': 'localhost',
-        'PORT': 5432,
-        'USER': 'postgres',
-        'PASSWORD': 'password',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "my_new_system",
+        "HOST": "localhost",
+        "PORT": 5432,
+        "USER": "postgres",
+        "PASSWORD": "password",
     },
-    'legacy': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'old_system',
-        'HOST': 'localhost',
-        'PORT': 3306,
-        'USER': 'root',
-        'PASSWORD': 'password',
-    }
+    "legacy": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "old_system",
+        "HOST": "localhost",
+        "PORT": 3306,
+        "USER": "root",
+        "PASSWORD": "password",
+    },
 }
 
 # Basic ETL configuration
 ETL_CONFIG = {
-    'PROJECT_NAME': 'My First ETL',
-    'REQUIRED_DATABASES': ['default', 'legacy'],
+    "PROJECT_NAME": "My First ETL",
+    "REQUIRED_DATABASES": ["default", "legacy"],
 }
 ```
 
@@ -49,39 +49,41 @@ ETL_CONFIG = {
 
 Define models for your source and target data:
 
-=== "Target Model (New System)"
+#### Target Model (New System)
 
-    ```python
-    # myapp/models.py
-    from django.db import models
+```python
+# myapp/models.py
+from django.db import models
+
+
+class Customer(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    phone = models.CharField(max_length=20, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     
-    class Customer(models.Model):
-        first_name = models.CharField(max_length=100)
-        last_name = models.CharField(max_length=100)
-        email = models.EmailField(unique=True)
-        phone = models.CharField(max_length=20, blank=True)
-        created_at = models.DateTimeField(auto_now_add=True)
-        
-        def __str__(self):
-            return f"{self.first_name} {self.last_name}"
-    ```
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+```
 
-=== "Source Model (Legacy System)"
+#### Source Model (Legacy System)
 
-    ```python
-    # legacy/models.py
-    from django.db import models
+```python
+# legacy/models.py
+from django.db import models
+
+
+class LegacyCustomer(models.Model):
+    customer_name = models.CharField(max_length=200)
+    email_address = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=50)
+    registration_date = models.DateTimeField()
     
-    class LegacyCustomer(models.Model):
-        customer_name = models.CharField(max_length=200)
-        email_address = models.CharField(max_length=100)
-        phone_number = models.CharField(max_length=50)
-        registration_date = models.DateTimeField()
-        
-        class Meta:
-            managed = False  # Don't let Django manage this table
-            db_table = 'customers'  # Existing table name
-    ```
+    class Meta:
+        managed = False  # Don't let Django manage this table
+        db_table = "customers"  # Existing table name
+```
 
 ## Step 3: Create Your First Transformer
 
@@ -93,6 +95,7 @@ from django_etl import BaseTransformer
 from myapp.models import Customer
 from legacy.models import LegacyCustomer
 
+
 class CustomerTransformer(BaseTransformer):
     """Transform legacy customers to new customer model"""
     
@@ -103,24 +106,26 @@ class CustomerTransformer(BaseTransformer):
     
     def get_source_data(self):
         """Get customers from legacy database"""
-        return LegacyCustomer.objects.using('legacy').all()
+
+        return LegacyCustomer.objects.using("legacy").all()
     
     def transform_batch(self, batch):
         """Transform a batch of legacy customers"""
+
         customers = []
         
         for legacy_customer in batch:
             try:
                 # Split name into first and last
-                name_parts = legacy_customer.customer_name.split(' ', 1)
+                name_parts = legacy_customer.customer_name.split(" ", 1)
                 first_name = name_parts[0]
-                last_name = name_parts[1] if len(name_parts) > 1 else ''
+                last_name = name_parts[1] if len(name_parts) > 1 else ""
                 
                 customer_data = {
-                    'first_name': self.clean_name(first_name),
-                    'last_name': self.clean_name(last_name),
-                    'email': self.clean_email(legacy_customer.email_address),
-                    'phone': self.clean_phone(legacy_customer.phone_number),
+                    "first_name": self.clean_name(first_name),
+                    "last_name": self.clean_name(last_name),
+                    "email": self.clean_email(legacy_customer.email_address),
+                    "phone": self.clean_phone(legacy_customer.phone_number),
                 }
                 
                 # Validate the data
@@ -128,47 +133,54 @@ class CustomerTransformer(BaseTransformer):
                     customers.append(Customer(**customer_data))
                     
             except Exception as e:
-                self.add_error(f"Failed to transform customer {legacy_customer.id}: {e}")
+                self.add_error(
+                    f"Failed to transform customer {legacy_customer.id}: {e}"
+                )
         
         return customers
     
     def save_batch(self, transformed_batch):
         """Save customers to new database"""
+
         Customer.objects.bulk_create(
-            transformed_batch, 
+            transformed_batch,
             ignore_conflicts=True,
             update_conflicts=True,
-            update_fields=['first_name', 'last_name', 'phone'],
-            unique_fields=['email']
+            update_fields=["first_name", "last_name", "phone"],
+            unique_fields=["email"],
         )
         return len(transformed_batch)
     
     # Helper methods
     def clean_name(self, name):
         """Clean and standardize names"""
+
         return name.strip().title() if name else ""
     
     def clean_email(self, email):
         """Clean email addresses"""
+
         return email.lower().strip() if email else ""
     
     def clean_phone(self, phone):
         """Clean phone numbers"""
+
         if not phone:
             return ""
         # Remove non-digits and format
-        digits = ''.join(filter(str.isdigit, phone))
+        digits = "".join(filter(str.isdigit, phone))
         if len(digits) == 10:
             return f"({digits[:3]}) {digits[3:6]}-{digits[6:]}"
         return digits
     
     def validate_customer_data(self, data):
         """Validate customer data"""
-        if not data.get('first_name'):
+
+        if not data.get("first_name"):
             self.add_warning("Customer missing first name")
             return False
         
-        if not data.get('email'):
+        if not data.get("email"):
             self.add_warning("Customer missing email")
             return False
             
@@ -182,11 +194,11 @@ Tell the framework where to find your transformers:
 ```python
 # settings.py
 ETL_CONFIG = {
-    'PROJECT_NAME': 'My First ETL',
-    'TRANSFORMER_DISCOVERY_PATHS': [
-        'myapp.transformers',  # Add your transformer module
+    "PROJECT_NAME": "My First ETL",
+    "TRANSFORMER_DISCOVERY_PATHS": [
+        "myapp.transformers",  # Add your transformer module
     ],
-    'REQUIRED_DATABASES': ['default', 'legacy'],
+    "REQUIRED_DATABASES": ["default", "legacy"],
 }
 ```
 
@@ -279,12 +291,12 @@ def transform_batch(self, batch):
     for legacy_customer in batch:
         # Handle foreign key relationships
         try:
-            department = Department.objects.get(
-                name=legacy_customer.dept_name
-            )
+            department = Department.objects.get(name=legacy_customer.dept_name)
         except Department.DoesNotExist:
             department = None
-            self.add_warning(f"Department not found: {legacy_customer.dept_name}")
+            self.add_warning(
+                f"Department not found: {legacy_customer.dept_name}"
+            )
         
         customer = Customer(
             name=legacy_customer.customer_name,
@@ -302,14 +314,14 @@ def transform_batch(self, batch):
     customers = []
     for legacy_customer in batch:
         # Skip inactive customers
-        if legacy_customer.status == 'INACTIVE':
+        if legacy_customer.status == "INACTIVE":
             self.add_info(f"Skipping inactive customer: {legacy_customer.id}")
             continue
         
         # Different logic based on customer type
-        if legacy_customer.customer_type == 'PREMIUM':
+        if legacy_customer.customer_type == "PREMIUM":
             priority = Customer.PRIORITY_HIGH
-        elif legacy_customer.customer_type == 'STANDARD':
+        elif legacy_customer.customer_type == "STANDARD":
             priority = Customer.PRIORITY_NORMAL
         else:
             priority = Customer.PRIORITY_LOW
@@ -328,19 +340,20 @@ def transform_batch(self, batch):
 ```python
 def validate_customer_data(self, data):
     """Comprehensive data validation"""
+
     errors = []
     
     # Required fields
-    if not data.get('first_name'):
+    if not data.get("first_name"):
         errors.append("Missing first name")
     
-    if not data.get('email'):
+    if not data.get("email"):
         errors.append("Missing email")
-    elif '@' not in data['email']:
+    elif "@" not in data["email"]:
         errors.append("Invalid email format")
     
     # Data format validation
-    if data.get('phone') and len(data['phone']) < 10:
+    if data.get("phone") and len(data["phone"]) < 10:
         errors.append("Phone number too short")
     
     if errors:
@@ -354,11 +367,11 @@ def validate_customer_data(self, data):
 
 Congratulations! You've successfully created and run your first ETL transformation. Here's what to explore next:
 
-- **[Creating Transformers](../user-guide/transformers.md)** - Learn advanced transformer patterns
-- **[Validation System](../user-guide/validation.md)** - Implement comprehensive data validation
-- **[Performance Monitoring](../user-guide/monitoring.md)** - Monitor and optimize your transformations
-- **[Error Handling](../user-guide/error-handling.md)** - Handle errors and edge cases
-- **[Management Commands](../user-guide/commands.md)** - Explore all available commands
+- **[Creating Transformers](../api/transformers.md)** - Learn advanced transformer patterns
+- **[Validation System](../api/validation.md)** - Implement comprehensive data validation
+- **[Performance Monitoring](../api/performance.md)** - Monitor and optimize your transformations
+- **[Error Handling](../api/rollback.md)** - Handle errors and rollback procedures
+- **[Management Commands](../api/commands.md)** - Explore all available commands
 
 !!! success "Ready for Production?"
     

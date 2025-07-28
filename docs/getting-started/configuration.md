@@ -14,12 +14,12 @@ The framework integrates seamlessly with Django's settings system. All configura
 # settings.py
 INSTALLED_APPS = [
     # ... your apps
-    'django_etl',
+    "django_etl",
 ]
 
 # Minimal ETL configuration
 ETL_CONFIG = {
-    'PROJECT_NAME': 'My ETL Project',
+    "PROJECT_NAME": "My ETL Project",
 }
 ```
 
@@ -29,59 +29,59 @@ ETL_CONFIG = {
 # settings.py
 ETL_CONFIG = {
     # Project settings
-    'PROJECT_NAME': 'Healthcare ETL System',
-    'ENVIRONMENT': 'production',  # development, staging, production
+    "PROJECT_NAME": "Healthcare ETL System",
+    "ENVIRONMENT": "production",  # development, staging, production
     
     # Transformation settings
-    'TRANSFORMATION': {
-        'BATCH_SIZE': 2000,
-        'MAX_RETRIES': 5,
-        'RETRY_DELAY': 10,
-        'ENABLE_VALIDATION': True,
-        'VALIDATION_MODE': 'strict',  # strict, lenient, warning_only
-        'CLEANUP_ON_ERROR': True,
-        'PARALLEL_PROCESSING': False,
-        'MAX_WORKERS': 4,
+    "TRANSFORMATION": {
+        "BATCH_SIZE": 2000,
+        "MAX_RETRIES": 5,
+        "RETRY_DELAY": 10,
+        "ENABLE_VALIDATION": True,
+        "VALIDATION_MODE": "strict",  # strict, lenient, warning_only
+        "CLEANUP_ON_ERROR": True,
+        "PARALLEL_PROCESSING": False,
+        "MAX_WORKERS": 4,
     },
     
     # Logging settings
-    'LOGGING': {
-        'LEVEL': 'INFO',
-        'FORMAT': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        'FILE_PATH': None,  # Will use LOG_DIRECTORY/etl.log
-        'MAX_FILE_SIZE_MB': 100,
-        'BACKUP_COUNT': 5,
-        'CONSOLE_OUTPUT': True,
+    "LOGGING": {
+        "LEVEL": "INFO",
+        "FORMAT": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        "FILE_PATH": None,  # Will use LOG_DIRECTORY/etl.log
+        "MAX_FILE_SIZE_MB": 100,
+        "BACKUP_COUNT": 5,
+        "CONSOLE_OUTPUT": True,
     },
     
     # Monitoring settings
-    'MONITORING': {
-        'ENABLE_PROFILING': True,
-        'ENABLE_METRICS': True,
-        'ALERT_ON_ERRORS': True,
-        'ALERT_EMAIL': 'admin@healthcare.com',
-        'WEBHOOK_URL': 'https://hooks.slack.com/services/...',
-        'SLACK_CHANNEL': '#etl-alerts',
+    "MONITORING": {
+        "ENABLE_PROFILING": True,
+        "ENABLE_METRICS": True,
+        "ALERT_ON_ERRORS": True,
+        "ALERT_EMAIL": "admin@healthcare.com",
+        "WEBHOOK_URL": "https://hooks.slack.com/services/...",
+        "SLACK_CHANNEL": "#etl-alerts",
     },
     
     # Directory settings (relative to BASE_DIR)
-    'BACKUP_DIRECTORY': 'etl_backups',
-    'TEMP_DIRECTORY': 'etl_temp',
-    'LOG_DIRECTORY': 'logs/etl',
+    "BACKUP_DIRECTORY": "etl_backups",
+    "TEMP_DIRECTORY": "etl_temp",
+    "LOG_DIRECTORY": "logs/etl",
     
     # Feature flags
-    'ENABLE_ROLLBACK': True,
-    'ENABLE_DRY_RUN': True,
-    'ENABLE_PARALLEL_TRANSFORMS': False,
+    "ENABLE_ROLLBACK": True,
+    "ENABLE_DRY_RUN": True,
+    "ENABLE_PARALLEL_TRANSFORMS": False,
     
     # Transformer discovery
-    'TRANSFORMER_DISCOVERY_PATHS': [
-        'myapp.transformers',
-        'healthcare.etl.transformers',
+    "TRANSFORMER_DISCOVERY_PATHS": [
+        "myapp.transformers",
+        "healthcare.etl.transformers",
     ],
     
     # Required databases (must exist in DATABASES)
-    'REQUIRED_DATABASES': ['default', 'legacy', 'analytics'],
+    "REQUIRED_DATABASES": ["default", "legacy", "analytics"],
 }
 ```
 
@@ -94,32 +94,32 @@ The ETL framework uses Django's built-in `DATABASES` setting. No separate databa
 ```python
 # settings.py
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'healthcare_new',
-        'HOST': 'localhost',
-        'PORT': 5432,
-        'USER': 'postgres',
-        'PASSWORD': 'secure_password',
-        'OPTIONS': {
-            'charset': 'utf8',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "healthcare_new",
+        "HOST": "localhost",
+        "PORT": 5432,
+        "USER": "postgres",
+        "PASSWORD": "secure_password",
+        "OPTIONS": {
+            "charset": "utf8",
         },
     },
-    'legacy': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'old_hospital_system',
-        'HOST': '192.168.1.100',
-        'PORT': 3306,
-        'USER': 'migration_user',
-        'PASSWORD': 'migration_pass',
-        'OPTIONS': {
-            'charset': 'utf8mb4',
+    "legacy": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "old_hospital_system",
+        "HOST": "192.168.1.100",
+        "PORT": 3306,
+        "USER": "migration_user",
+        "PASSWORD": "migration_pass",
+        "OPTIONS": {
+            "charset": "utf8mb4",
         },
     },
-    'analytics': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'analytics.sqlite3',
-    }
+    "analytics": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "analytics.sqlite3",
+    },
 }
 ```
 
@@ -131,13 +131,14 @@ DATABASES = {
 # settings.py
 import os
 
+
 ETL_CONFIG = {
-    'PROJECT_NAME': os.environ.get('ETL_PROJECT_NAME', 'Default ETL'),
-    'ENVIRONMENT': os.environ.get('DJANGO_ENV', 'development'),
+    "PROJECT_NAME": os.environ.get("ETL_PROJECT_NAME", "Default ETL"),
+    "ENVIRONMENT": os.environ.get("DJANGO_ENV", "development"),
     
-    'TRANSFORMATION': {
-        'BATCH_SIZE': int(os.environ.get('ETL_BATCH_SIZE', 1000)),
-        'ENABLE_VALIDATION': os.environ.get('ETL_VALIDATION', 'true').lower() == 'true',
+    "TRANSFORMATION": {
+        "BATCH_SIZE": int(os.environ.get("ETL_BATCH_SIZE", 1000)),
+        "ENABLE_VALIDATION": os.environ.get("ETL_VALIDATION", "true").lower() == "true",
     },
     
     'MONITORING': {
@@ -149,67 +150,67 @@ ETL_CONFIG = {
 
 ### Development vs Production
 
-=== "Development Settings"
+#### Development Settings
 
-    ```python
-    # settings/development.py
-    from .base import *
+```python
+# settings/development.py
+from .base import *
+
+ETL_CONFIG = {
+    'PROJECT_NAME': 'Healthcare ETL (Dev)',
+    'ENVIRONMENT': 'development',
     
-    ETL_CONFIG = {
-        'PROJECT_NAME': 'Healthcare ETL (Dev)',
-        'ENVIRONMENT': 'development',
-        
-        'TRANSFORMATION': {
-            'BATCH_SIZE': 100,  # Smaller batches for testing
-            'VALIDATION_MODE': 'lenient',
-        },
-        
-        'LOGGING': {
-            'LEVEL': 'DEBUG',
-            'CONSOLE_OUTPUT': True,
-        },
-        
-        'MONITORING': {
-            'ENABLE_PROFILING': True,
-            'ALERT_ON_ERRORS': False,  # No alerts in dev
-        },
-    }
-    ```
-
-=== "Production Settings"
-
-    ```python
-    # settings/production.py
-    from .base import *
+    'TRANSFORMATION': {
+        'BATCH_SIZE': 100,  # Smaller batches for testing
+        'VALIDATION_MODE': 'lenient',
+    },
     
-    ETL_CONFIG = {
-        'PROJECT_NAME': 'Healthcare ETL (Production)',
-        'ENVIRONMENT': 'production',
-        
-        'TRANSFORMATION': {
-            'BATCH_SIZE': 5000,  # Larger batches for performance
-            'VALIDATION_MODE': 'strict',
-            'PARALLEL_PROCESSING': True,
-            'MAX_WORKERS': 8,
-        },
-        
-        'LOGGING': {
-            'LEVEL': 'INFO',
-            'CONSOLE_OUTPUT': False,
-            'FILE_PATH': '/var/log/etl/production.log',
-        },
-        
-        'MONITORING': {
-            'ENABLE_PROFILING': True,
-            'ENABLE_METRICS': True,
-            'ALERT_ON_ERRORS': True,
-            'ALERT_EMAIL': 'ops@healthcare.com',
-        },
-        
-        'BACKUP_DIRECTORY': '/opt/etl/backups',
-        'LOG_DIRECTORY': '/var/log/etl',
-    }
-    ```
+    'LOGGING': {
+        'LEVEL': 'DEBUG',
+        'CONSOLE_OUTPUT': True,
+    },
+    
+    'MONITORING': {
+        'ENABLE_PROFILING': True,
+        'ALERT_ON_ERRORS': False,  # No alerts in dev
+    },
+}
+```
+
+#### Production Settings
+
+```python
+# settings/production.py
+from .base import *
+
+ETL_CONFIG = {
+    'PROJECT_NAME': 'Healthcare ETL (Production)',
+    'ENVIRONMENT': 'production',
+    
+    'TRANSFORMATION': {
+        'BATCH_SIZE': 5000,  # Larger batches for performance
+        'VALIDATION_MODE': 'strict',
+        'PARALLEL_PROCESSING': True,
+        'MAX_WORKERS': 8,
+    },
+    
+    'LOGGING': {
+        'LEVEL': 'INFO',
+        'CONSOLE_OUTPUT': False,
+        'FILE_PATH': '/var/log/etl/production.log',
+    },
+    
+    'MONITORING': {
+        'ENABLE_PROFILING': True,
+        'ENABLE_METRICS': True,
+        'ALERT_ON_ERRORS': True,
+        'ALERT_EMAIL': 'ops@healthcare.com',
+    },
+    
+    'BACKUP_DIRECTORY': '/opt/etl/backups',
+    'LOG_DIRECTORY': '/var/log/etl',
+}
+```
 
 ## Configuration Reference
 

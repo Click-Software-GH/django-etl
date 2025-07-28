@@ -10,81 +10,36 @@ edit_uri: edit/main/docs/
 
 # Configuration
 theme:
-  name: material
-  palette:
-    # Palette toggle for light mode
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: blue
-      accent: blue
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
-    # Palette toggle for dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: blue
-      accent: blue
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
-  
-  features:
-    - navigation.tabs
-    - navigation.tabs.sticky
-    - navigation.sections
-    - navigation.expand
-    - navigation.path
-    - navigation.indexes
-    - toc.follow
-    - navigation.top
-    - search.highlight
-    - search.share
-    - content.tabs.link
-    - content.code.annotation
-    - content.code.copy
-    - content.action.edit
-    - content.action.view
-  
-  icon:
-    repo: fontawesome/brands/github
-    edit: material/file-edit-outline
+  name: readthedocs
+  highlightjs: false  # Disable highlight.js to prevent conflicts with Pygments
+  navigation_depth: 4
+  collapse_navigation: false
+  sticky_navigation: true
+  include_homepage_in_sidebar: true
+  prev_next_buttons_location: bottom
 
 # Extensions
 markdown_extensions:
-  - pymdownx.highlight:
-      anchor_linenums: true
-      line_spans: __span
-      pygments_lang_class: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
-  - pymdownx.tasklist:
-      custom_checkbox: true
-  - pymdownx.tabbed:
-      alternate_style: true
-  - pymdownx.details
-  - pymdownx.critic
-  - pymdownx.caret
-  - pymdownx.keys
-  - pymdownx.mark
-  - pymdownx.tilde
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - codehilite:
+      guess_lang: false
+      use_pygments: true
+      pygments_style: default
+      linenums: false
+  - toc:
+      permalink: true
+      baselevel: 1
   - admonition
   - tables
   - attr_list
   - def_list
   - footnotes
   - md_in_html
-  - toc:
-      permalink: true
+  - fenced_code
+  - nl2br
 
 # Plugins
 plugins:
-  - search:
-      separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - search
   - mkdocstrings:
       handlers:
         python:
@@ -93,7 +48,6 @@ plugins:
             members_order: source
             separate_signature: true
             show_signature_annotations: true
-            signature_crossrefs: true
 
 # Navigation
 nav:
@@ -119,8 +73,10 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/Click-Software-GH/django-etl
-    - icon: fontawesome/solid/envelope
-      link: mailto:etl-support@yourcompany.com
+
+# Extra CSS for ReadTheDocs styling
+extra_css:
+  - css/extra.css
 
 # Copyright
 copyright: Copyright &copy; 2025 UHMS Backend Team

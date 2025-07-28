@@ -1,171 +1,72 @@
-# Django ETL Framework 🚀
+# Welcome to the Django ETL Framework documentation!
 
-<p align="center">
-  <strong>A comprehensive, production-ready ETL framework for Django applications</strong>
-</p>
+Django ETL Framework is a comprehensive, production-ready ETL (Extract, Transform, Load) framework specifically designed for Django applications.
 
-<p align="center">
-  <a href="https://python.org">
-    <img src="https://img.shields.io/badge/python-3.8%2B-blue.svg" alt="Python Version">
-  </a>
-  <a href="https://djangoproject.com">
-    <img src="https://img.shields.io/badge/django-3.2%2B-green.svg" alt="Django Version">
-  </a>
-  <a href="https://github.com/Click-Software-GH/django-etl/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
-  </a>
-</p>
+The framework provides powerful tools for healthcare data migration and complex database transformations, with built-in HIPAA compliance patterns and medical data validation rules.
 
-<p align="center">
-  <a href="getting-started/installation.md" class="md-button md-button--primary">Get Started</a>
-  <a href="https://github.com/Click-Software-GH/django-etl" class="md-button">View on GitHub</a>
-</p>
+## Getting Started
 
-## 🏥 Designed for Healthcare
+The easiest way to understand what Django ETL Framework can do is to check out our [Quick Start Guide](getting-started/quickstart.md). In just a few minutes, you'll learn how to set up your first data transformation pipeline.
 
-The Django ETL Framework is specifically engineered for healthcare data migration and complex database transformations, with built-in HIPAA compliance patterns and medical data validation rules.
+## Getting it
 
-## ✨ Key Features
-
-<div class="grid cards" markdown>
-
--   :material-database-sync: **Cross-Database Support**
-
-    ---
-
-    MySQL, PostgreSQL, SQLite with automatic vendor detection and optimized queries for each database type.
-
--   :material-speedometer: **High Performance**
-
-    ---
-
-    Memory-efficient batch processing with configurable batch sizes. Process 50,000+ records per minute.
-
--   :material-shield-check: **Advanced Validation**
-
-    ---
-
-    Healthcare-specific validation rules with severity levels. HIPAA-compliant data handling patterns.
-
--   :material-chart-line: **Performance Profiling**
-
-    ---
-
-    Built-in monitoring and optimization recommendations. Real-time performance metrics and alerts.
-
--   :material-backup-restore: **Rollback & Recovery**
-
-    ---
-
-    Automatic backups and migration rollback capabilities. Never lose data during transformations.
-
--   :material-file-document: **Comprehensive Logging**
-
-    ---
-
-    Detailed audit trails and debugging information. Full traceability of all data transformations.
-
-</div>
-
-## 🚀 Quick Example
-
-```python
-from django_etl import BaseTransformer
-from myapp.models import Patient
-from legacy.models import LegacyPatient
-
-class PatientTransformer(BaseTransformer):
-    """Transform legacy patients to new patient model"""
-    
-    def get_source_data(self):
-        return LegacyPatient.objects.using('legacy').all()
-    
-    def transform_batch(self, batch):
-        patients = []
-        for legacy_patient in batch:
-            patient_data = {
-                'first_name': self.clean_name(legacy_patient.name),
-                'email': self.clean_email(legacy_patient.email),
-                'phone': self.format_phone(legacy_patient.phone),
-            }
-            if self.validate_patient_data(patient_data):
-                patients.append(Patient(**patient_data))
-        return patients
-    
-    def save_batch(self, transformed_batch):
-        Patient.objects.bulk_create(transformed_batch, ignore_conflicts=True)
-        return len(transformed_batch)
-```
-
-Run your transformation:
+You can get Django ETL Framework by using pip:
 
 ```bash
-python manage.py migrate_legacy_data --only patients --dry-run
+$ pip install git+https://github.com/Click-Software-GH/django-etl.git
 ```
 
-## 📊 Performance Benchmarks
+If you want to install it from source, grab the git repository and install:
 
-Tested on real healthcare datasets:
-
-| Data Type | Records/Minute | Notes |
-|-----------|----------------|-------|
-| Patient Records | 10,000+ | With full validation |
-| Medical Appointments | 25,000+ | Including relationship mapping |
-| Insurance Claims | 5,000+ | Complex validation rules |
-| Laboratory Results | 50,000+ | Simple transformations |
-
-## 🎯 Perfect For
-
-=== "Healthcare Systems"
-
-    - **Hospital Management Systems** - Patient, doctor, appointment migrations
-    - **Medical Records** - EMR/EHR system consolidations  
-    - **Insurance Processing** - Claims and billing system migrations
-    - **Laboratory Systems** - Test results and report migrations
-
-=== "General Applications"
-
-    - **E-commerce** - Product, order, customer data migrations
-    - **CRM Systems** - Contact and lead management consolidations
-    - **Financial Systems** - Transaction and account migrations
-    - **Educational Systems** - Student and course data migrations
-
-## 🏗️ Architecture
-
-```mermaid
-graph TB
-    A[Django Project] --> B[ETL Framework]
-    B --> C[Configuration Manager]
-    B --> D[Base Transformer]
-    B --> E[Validation System]
-    B --> F[Performance Profiler]
-    
-    C --> G[Django Settings]
-    D --> H[Source Database]
-    D --> I[Target Database]
-    E --> J[Healthcare Rules]
-    F --> K[Monitoring Alerts]
-    
-    style A fill:#e1f5fe
-    style B fill:#f3e5f5
-    style H fill:#fff3e0
-    style I fill:#e8f5e8
+```bash
+$ git clone https://github.com/Click-Software-GH/django-etl.git
+$ cd django-etl
+$ pip install .
 ```
 
-## 🤝 Community
+Then you will need to add the `django_etl` application to the INSTALLED_APPS setting of your Django project settings.py file.
 
-- **[GitHub Issues](https://github.com/Click-Software-GH/django-etl/issues)** - Report bugs or request features
-- **[GitHub Discussions](https://github.com/Click-Software-GH/django-etl/discussions)** - Ask questions or share ideas
-- **[Email Support](mailto:etl-support@yourcompany.com)** - Direct support for complex issues
+For more detailed instructions check out our [Installation instructions](getting-started/installation.md). Enjoy.
 
-## 📄 License
+## Compatibility with versions of Python and Django
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/Click-Software-GH/django-etl/blob/main/LICENSE) file for details.
+We follow the Django guidelines for supported Python and Django versions:
 
----
+- **Python**: 3.8+
+- **Django**: 4.2+
 
-<div align="center">
-**Built with ❤️ for the Django and Healthcare communities**
+This might mean the django-etl may work with older or unsupported versions but we do not guarantee it and most likely will not fix bugs related to incompatibilities with older versions.
 
-*Developed by the UHMS Backend Team*
-</div>
+## Key Features
+
+- **Cross-Database Support** - MySQL, PostgreSQL, SQLite with automatic vendor detection
+- **High Performance** - Memory-efficient batch processing with configurable batch sizes
+- **Advanced Validation** - Healthcare-specific validation rules with severity levels
+- **Performance Profiling** - Built-in monitoring and optimization recommendations
+- **Rollback & Recovery** - Automatic backups and migration rollback capabilities
+- **Comprehensive Logging** - Detailed audit trails and debugging information
+
+## Contents
+
+- [Installation instructions](getting-started/installation.md)
+    - [Installing](getting-started/installation.md#installation-methods)
+    - [Development](getting-started/installation.md#development-installation)
+    - [Configuration](getting-started/installation.md#with-extra-dependencies)
+- [Quick Start Guide](getting-started/quickstart.md)
+    - [Define Your Models](getting-started/quickstart.md#step-2-define-your-models)
+    - [Create Your First Transformer](getting-started/quickstart.md#step-3-create-your-first-transformer)
+    - [Run Your Migration](getting-started/quickstart.md#step-4-run-your-migration)
+- [Configuration](getting-started/configuration.md)
+    - [Basic Configuration](getting-started/configuration.md#basic-configuration)
+    - [Advanced Settings](getting-started/configuration.md#advanced-configuration)
+    - [Environment Settings](getting-started/configuration.md#development-vs-production)
+- [API Reference](api/)
+    - [Configuration](api/config.md)
+    - [Transformers](api/transformers.md)
+    - [Management Commands](api/commands.md)
+    - [Data Validation](api/validation.md)
+    - [Rollback & Recovery](api/rollback.md)
+    - [Performance Profiling](api/performance.md)
+- [Migration Guide](migration-guide.md)
+- [Contributing](contributing.md)
+

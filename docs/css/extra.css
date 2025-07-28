@@ -1,0 +1,235 @@
+/* ReadTheDocs-style code block styling with yellowish-green background */
+
+/* Simplified approach - target the main container only */
+.codehilite {
+    background: #eeffcc !important;  /* Very light yellowish-green background */
+    border: 1px solid #d4d4d4 !important;  /* Light gray border */
+    padding: 12px !important;  /* Add padding to container */
+    border-radius: 3px !important;  /* Subtle rounded corners */
+    font-size: 0.85em;
+    line-height: 1.4;
+    overflow-x: auto;
+    margin: 15px 0;
+}
+
+/* Remove all styling from inner elements to prevent double areas */
+.codehilite pre,
+.codehilite code,
+.codehilite .hljs {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* Also target highlight containers */
+.highlight {
+    background: #eeffcc !important;
+    border: 1px solid #d4d4d4 !important;
+    padding: 12px !important;
+    border-radius: 3px !important;
+    margin: 15px 0;
+}
+
+.highlight pre,
+.highlight code {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* ReadTheDocs specific selectors */
+.rst-content .codehilite {
+    background: #eeffcc !important;
+    border: 1px solid #d4d4d4 !important;
+    border-radius: 3px !important;
+    padding: 12px !important;
+}
+
+.rst-content .codehilite pre,
+.rst-content .codehilite code,
+.rst-content .codehilite .hljs {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Hide ALL icons throughout the entire documentation */
+.fa, .fab, .fas, .far, .fal, .fad,
+.icon, .material-icons, .fontawesome,
+[class*="icon-"], [class^="icon-"],
+.wy-nav-side .fa, .wy-nav-side .icon,
+.wy-menu-vertical .fa, .wy-menu-vertical .icon,
+.rst-content .fa, .rst-content .icon,
+.wy-breadcrumbs .fa, .wy-breadcrumbs .icon,
+.wy-nav-content .fa, .wy-nav-content .icon,
+.headerlink .fa, .headerlink .icon,
+a .fa, a .fab, a .fas, a .far,
+a .icon, a .material-icons,
+nav .fa, nav .fab, nav .fas, nav .far,
+nav .icon, nav .material-icons,
+li .fa, li .fab, li .fas, li .far,
+li .icon, li .material-icons,
+.wy-nav-side .social .fa,
+.wy-nav-side .social .fab,
+.wy-nav-side .social .icon,
+.social .fa, .social .fab, .social .icon,
+.wy-side-nav-search .fa,
+.wy-side-nav-search .icon,
+button .fa, button .fab, button .fas, button .far,
+button .icon, button .material-icons {
+    display: none !important;
+}
+
+/* Bring back ONLY the expand/collapse icons (+ in box) for sidebar navigation */
+.toctree-expand, .toctree-collapse,
+.wy-menu-vertical .toctree-expand,
+.wy-menu-vertical .toctree-collapse {
+    display: inline-block !important;
+}
+
+/* Hide only specific sidebar footer elements, not the navigation */
+.wy-nav-side .wy-side-nav-search + div + div,
+.ethical-ads,
+.rst-versions {
+    display: none !important;
+}
+
+/* Hide next/previous navigation buttons ONLY in header area */
+header .btn-neutral,
+header nav .btn,
+header a[rel="next"], 
+header a[rel="prev"],
+.wy-nav-top .btn-neutral,
+.wy-nav-top nav .btn,
+.wy-nav-top a[rel="next"], 
+.wy-nav-top a[rel="prev"],
+.navbar .btn-neutral,
+.navbar nav .btn,
+.navbar a[rel="next"], 
+.navbar a[rel="prev"] {
+    display: none !important;
+}
+
+/* Inline code with subtle yellowish background */
+code {
+    background: #f8f9d4;  /* Lighter yellowish for inline code */
+    border: 1px solid #e1e4e5;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 0.85em;
+    color: #333;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+/* Don't apply background to code inside pre blocks */
+pre code {
+    background: transparent;
+    border: none;
+    padding: 0;
+    border-radius: 0;
+}
+
+/* Comprehensive syntax highlighting for the yellowish background - with !important to override defaults */
+
+/* Enhanced Python code formatting to match Black formatter style */
+.codehilite, .highlight {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+    font-size: 0.9em;
+    line-height: 1.6;  /* Better line spacing like Black */
+    letter-spacing: 0.02em;  /* Slight letter spacing for readability */
+}
+
+/* Improve spacing around operators and punctuation */
+.codehilite .o, .highlight .o {
+    margin: 0 0.15em;  /* Add space around operators like =, +, -, etc. */
+}
+
+/* Spacing after commas */
+.codehilite .p, .highlight .p {
+    margin-right: 0.1em;  /* Space after commas, colons, etc. */
+}
+
+/* Keywords - bold and green */
+.codehilite .k, .highlight .k { color: #008000 !important; font-weight: bold !important; }
+
+/* Built-in functions and classes - bold purple */
+.codehilite .nb, .highlight .nb { color: #800080 !important; font-weight: bold !important; }
+
+/* Function definitions - bold blue */
+.codehilite .nf, .highlight .nf { color: #0000ff !important; font-weight: bold !important; }
+
+/* Class definitions - bold dark blue */
+.codehilite .nc, .highlight .nc { color: #0000c0 !important; font-weight: bold !important; }
+
+/* Import statements - bold dark green */
+.codehilite .kn, .highlight .kn { color: #006400 !important; font-weight: bold !important; }
+
+/* From imports - bold dark green */
+.codehilite .nn, .highlight .nn { color: #006400 !important; font-weight: bold !important; }
+
+/* Decorators - bold orange */
+.codehilite .nd, .highlight .nd { color: #ff8000 !important; font-weight: bold !important; }
+
+/* Strings - red */
+.codehilite .s, .highlight .s { color: #ba2121 !important; }
+.codehilite .s1, .highlight .s1 { color: #ba2121 !important; }
+.codehilite .s2, .highlight .s2 { color: #ba2121 !important; }
+
+/* Triple quoted strings/docstrings - red italic */
+.codehilite .sd, .highlight .sd { color: #4070A0 !important; font-style: italic !important; }
+
+/* Comments - italic gray */
+.codehilite .c, .highlight .c { color: #408080 !important; font-style: italic !important; }
+.codehilite .c1, .highlight .c1 { color: #408080 !important; font-style: italic !important; }
+
+/* Numbers - dark red */
+.codehilite .m, .highlight .m { color: #800000 !important; }
+.codehilite .mi, .highlight .mi { color: #800000 !important; }
+.codehilite .mf, .highlight .mf { color: #800000 !important; }
+
+/* Variables and names - black */
+.codehilite .n, .highlight .n { color: #000000 !important; }
+
+/* Self parameter - italic purple */
+.codehilite .bp, .highlight .bp { color: #800080 !important; font-style: italic !important; }
+
+/* Operators - gray with spacing */
+.codehilite .o, .highlight .o { color: #666666 !important; }
+
+/* Punctuation - dark gray */
+.codehilite .p, .highlight .p { color: #333333 !important; }
+
+/* Error highlighting - red background */
+.codehilite .err, .highlight .err { background-color: #ffc0c0 !important; color: #000000 !important; }
+
+/* Constants - bold dark red */
+.codehilite .kc, .highlight .kc { color: #006400 !important; font-weight: bold !important; }
+
+/* Exception names - bold red */
+.codehilite .ne, .highlight .ne { color: #c00000 !important; font-weight: bold !important; }
+
+/* Magic methods - bold purple */
+.codehilite .fm, .highlight .fm { color: #800080 !important; font-weight: bold !important; }
+
+/* Type annotations - bold teal */
+.codehilite .kt, .highlight .kt { color: #008080 !important; font-weight: bold !important; }
+
+/* Also target ReadTheDocs specific containers with higher specificity */
+.rst-content .codehilite .k, .rst-content .highlight .k { color: #008000 !important; font-weight: bold !important; }
+.rst-content .codehilite .nb, .rst-content .highlight .nb { color: #800080 !important; font-weight: bold !important; }
+.rst-content .codehilite .nf, .rst-content .highlight .nf { color: #0e84b5 !important; font-weight: bold !important; }
+.rst-content .codehilite .nc, .rst-content .highlight .nc { color: #0e84b5 !important; font-weight: bold !important; }
+.rst-content .codehilite .kn, .rst-content .highlight .kn { color: #006400 !important; font-weight: bold !important; }
+.rst-content .codehilite .nn, .rst-content .highlight .nn { color: #0e84b5 !important; font-weight: bold !important; }
+.rst-content .codehilite .nd, .rst-content .highlight .nd { color: #ff8000 !important; font-weight: bold !important; }
+.rst-content .codehilite .n, .rst-content .highlight .n { color: #53544f !important;}
+.rst-content .codehilite .s, .rst-content .highlight .s { color: #ba2121 !important; }
+.rst-content .codehilite .s1, .rst-content .highlight .s1 { color: #ba2121 !important; }
+.rst-content .codehilite .s2, .rst-content .highlight .s2 { color: #ba2121 !important; }
+.rst-content .codehilite .sd, .rst-content .highlight .sd { color: #4070A0 !important; font-style: italic !important; }
+.rst-content .codehilite .c, .rst-content .highlight .c { color: #408080 !important; font-style: italic !important; }
+.rst-content .codehilite .c1, .rst-content .highlight .c1 { color: #408080 !important; font-style: italic !important; }

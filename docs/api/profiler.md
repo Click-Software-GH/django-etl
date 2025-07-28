@@ -208,11 +208,12 @@ Export metrics for monitoring dashboards:
 ```python
 def export_metrics_to_prometheus(profiler):
     """Export profiler metrics to Prometheus"""
+
     report = profiler.get_performance_report()
     
-    for operation, stats in report['operations'].items():
+    for operation, stats in report["operations"].items():
         # Export to Prometheus gauge
-        operation_time_gauge.labels(operation=operation).set(stats['avg_time'])
+        operation_time_gauge.labels(operation=operation).set(stats["avg_time"])
         memory_usage_gauge.labels(operation=operation).set(stats['avg_memory_delta'])
 ```
 

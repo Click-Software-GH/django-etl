@@ -30,7 +30,7 @@ class PatientTransformer(BaseTransformer):
     
     def setup_validation_rules(self):
         """Define validation rules for patient data"""
-        
+
         # Age validation
         def validate_age(birth_date):
             if not birth_date:
@@ -478,11 +478,12 @@ def analyze_validation_results(self, validation_result):
 ```python
 def export_validation_report(self, validation_result, filename):
     """Export detailed validation report"""
+
     import json
     from datetime import datetime
     
     report = {
-        'validation_timestamp': datetime.now().isoformat(),
+        "validation_timestamp": datetime.now().isoformat(),
         'transformer': self.__class__.__name__,
         'summary': {
             'total_records': validation_result['total_records'],
