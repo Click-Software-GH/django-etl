@@ -28,7 +28,8 @@ class BaseTransformer:
         self.logger = logging.getLogger(f"migration.{self.__class__.__name__}")
         self.start_time = None
         self.legacy_db = "legacy"  # Default legacy database alias
-        
+        self.dry_run = False  # Add dry_run flag to instance
+
         # New enhancements
         self.config = config_manager.get_transformation_config()
         self.profiler = ETLProfiler()
@@ -49,6 +50,7 @@ class BaseTransformer:
         """
         self.start_time = time.time()
         self.migration_id = f"{self.__class__.__name__}_{int(self.start_time)}"
+        self.dry_run = dry_run  # Set the dry_run flag on the instance
 
         if dry_run:
             self.log_info("Dry run mode: no data will be saved.")
@@ -57,12 +59,10 @@ class BaseTransformer:
         snapshot = None
         if enable_rollback and not dry_run:
             try:
-                affected_models = getattr(self, 'affected_models', [])
+                affected_models = getattr(self, "affected_models", [])
                 if affected_models:
                     snapshot = self.rollback_manager.create_snapshot(
-                        self.migration_id,
-                        self.__class__.__name__,
-                        affected_models
+                        self.migration_id, self.__class__.__name__, affected_models
                     )
                     self.log_info(f"Created rollback snapshot: {snapshot.migration_id}")
             except Exception as e:
@@ -83,19 +83,21 @@ class BaseTransformer:
         except Exception as e:
             self.errors.append(str(e))
             self.logger.error(f"Error during migration: {e}", exc_info=True)
-            
+
             # Attempt automatic rollback if enabled
             if snapshot and enable_rollback:
                 try:
                     self.log_info("Attempting automatic rollback...")
-                    success = self.rollback_manager.rollback_migration(self.migration_id)
+                    success = self.rollback_manager.rollback_migration(
+                        self.migration_id
+                    )
                     if success:
                         self.log_info("Automatic rollback completed successfully")
                     else:
                         self.log_error("Automatic rollback failed")
                 except Exception as rollback_error:
                     self.log_error(f"Rollback failed: {rollback_error}")
-            
+
             raise
 
     def _log_completion_stats(self):
@@ -201,6 +203,13 @@ class BaseTransformer:
 
         self.log_info(f"Bulk creating {total} {model_class.__name__} instances")
 
+        if self.dry_run:
+            self.log_info(
+                f"DRY RUN: Would create {total} {model_class.__name__} instances"
+            )
+            self.stats["created"] = total
+            return total
+
         for i in range(0, total, batch_size):
             batch = instances[i : i + batch_size]
             try:
@@ -303,6 +312,16 @@ class BaseTransformer:
         Returns:
             Query results
         """
+        if self.dry_run:
+            self.log_info(f"DRY RUN: Would execute SQL: {sql[:100]}...")
+            if sql.strip().upper().startswith("SELECT"):
+                # For SELECT queries, we can safely execute them in dry run
+                pass
+            else:
+                # For INSERT/UPDATE/DELETE, just log and return
+                self.log_info("DRY RUN: Skipping non-SELECT SQL execution")
+                return 0
+
         try:
             with connections[database].cursor() as cursor:
                 cursor.execute(sql, params or [])
@@ -358,6 +377,30 @@ class BaseTransformer:
         Returns:
             Tuple of (instance, created)
         """
+        if self.dry_run:
+            # In dry run, just check if it exists
+            try:
+                existing = model_class.objects.filter(**lookup).first()
+                if existing:
+                    self.log_info(
+                        f"DRY RUN: Found existing {model_class.__name__}: {lookup}"
+                    )
+                    self.stats["existing"] += 1
+                    return existing, False
+                else:
+                    self.log_info(
+                        f"DRY RUN: Would create {model_class.__name__}: {lookup}"
+                    )
+                    # Create instance without saving for validation/logging purposes
+                    instance = model_class(**lookup, **(defaults or {}))
+                    self.stats["created"] += 1
+                    return instance, True
+            except Exception as e:
+                self.log_error(
+                    f"Error checking {model_class.__name__} with {lookup}: {e}"
+                )
+                raise
+
         try:
             instance, created = model_class.objects.get_or_create(
                 defaults=defaults or {}, **lookup
@@ -380,23 +423,31 @@ class BaseTransformer:
             raise
 
     # New enhanced methods
-    def validate_batch_with_rules(self, records: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def validate_batch_with_rules(
+        self, records: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         """
         Validate a batch of records using configured validation rules
-        
+
         Args:
             records: List of record dictionaries to validate
-            
+
         Returns:
             Validation summary with results
         """
         with self.profiler.profile_operation("batch_validation"):
             return self.validator.validate_batch(records)
-    
-    def add_validation_rule(self, field: str, rule_func: Callable, severity: ValidationSeverity = ValidationSeverity.ERROR, message: str = ""):
+
+    def add_validation_rule(
+        self,
+        field: str,
+        rule_func: Callable,
+        severity: ValidationSeverity = ValidationSeverity.ERROR,
+        message: str = "",
+    ):
         """
         Add a validation rule to the transformer
-        
+
         Args:
             field: Field name to validate
             rule_func: Function that returns True if valid
@@ -404,82 +455,101 @@ class BaseTransformer:
             message: Custom error message
         """
         self.validator.add_rule(field, rule_func, severity, message)
-    
-    def batch_process_with_retry(self, data_source, process_func: Callable, batch_size: int = None) -> Dict[str, Any]:
+
+    def batch_process_with_retry(
+        self, data_source, process_func: Callable, batch_size: int = None
+    ) -> Dict[str, Any]:
         """
         Process data in batches with retry logic
-        
+
         Args:
             data_source: Iterable data source
             process_func: Function to process each batch
             batch_size: Override default batch size
-            
+
         Returns:
             Processing summary
         """
         batch_size = batch_size or self.config.batch_size
         max_retries = self.config.max_retries
         retry_delay = self.config.retry_delay
-        
+
         results = {
-            'total_batches': 0,
-            'successful_batches': 0,
-            'failed_batches': 0,
-            'retried_batches': 0,
-            'total_records': 0
+            "total_batches": 0,
+            "successful_batches": 0,
+            "failed_batches": 0,
+            "retried_batches": 0,
+            "total_records": 0,
         }
-        
+
         batch = []
         for item in data_source:
             batch.append(item)
-            
+
             if len(batch) >= batch_size:
-                self._process_batch_with_retry(batch, process_func, max_retries, retry_delay, results)
+                self._process_batch_with_retry(
+                    batch, process_func, max_retries, retry_delay, results
+                )
                 batch = []
-                results['total_batches'] += 1
-        
+                results["total_batches"] += 1
+
         # Process remaining items
         if batch:
-            self._process_batch_with_retry(batch, process_func, max_retries, retry_delay, results)
-            results['total_batches'] += 1
-        
+            self._process_batch_with_retry(
+                batch, process_func, max_retries, retry_delay, results
+            )
+            results["total_batches"] += 1
+
         return results
-    
-    def _process_batch_with_retry(self, batch: List[Any], process_func: Callable, max_retries: int, retry_delay: int, results: Dict[str, Any]):
+
+    def _process_batch_with_retry(
+        self,
+        batch: List[Any],
+        process_func: Callable,
+        max_retries: int,
+        retry_delay: int,
+        results: Dict[str, Any],
+    ):
         """Process a single batch with retry logic"""
         for attempt in range(max_retries + 1):
             try:
-                with self.profiler.profile_operation(f"batch_processing_attempt_{attempt}"):
+                with self.profiler.profile_operation(
+                    f"batch_processing_attempt_{attempt}"
+                ):
                     process_func(batch)
-                results['successful_batches'] += 1
-                results['total_records'] += len(batch)
+                results["successful_batches"] += 1
+                results["total_records"] += len(batch)
                 if attempt > 0:
-                    results['retried_batches'] += 1
+                    results["retried_batches"] += 1
                 break
             except Exception as e:
                 if attempt < max_retries:
-                    self.log_warning(f"Batch processing failed (attempt {attempt + 1}/{max_retries + 1}): {e}")
+                    self.log_warning(
+                        f"Batch processing failed (attempt {attempt + 1}/{max_retries + 1}): {e}"
+                    )
                     time.sleep(retry_delay)
                 else:
-                    self.log_error(f"Batch processing failed after {max_retries + 1} attempts: {e}")
-                    results['failed_batches'] += 1
-    
+                    self.log_error(
+                        f"Batch processing failed after {max_retries + 1} attempts: {e}"
+                    )
+                    results["failed_batches"] += 1
+
     def get_performance_report(self) -> Dict[str, Any]:
         """Get detailed performance report"""
         return self.profiler.get_performance_report()
-    
+
     def rollback_migration(self) -> bool:
         """Rollback the current migration"""
         if not self.migration_id:
             self.log_error("No migration ID available for rollback")
             return False
-        
+
         try:
             return self.rollback_manager.rollback_migration(self.migration_id)
         except Exception as e:
             self.log_error(f"Rollback failed: {e}")
             return False
-    
+
     def cleanup_temp_data(self):
         """Clean up temporary data and resources"""
         try:
@@ -487,19 +557,19 @@ class BaseTransformer:
             self.log_info("Performing cleanup...")
         except Exception as e:
             self.log_warning(f"Cleanup warning: {e}")
-    
+
     def get_migration_summary(self) -> Dict[str, Any]:
         """Get comprehensive migration summary"""
         duration = time.time() - self.start_time if self.start_time else 0
-        
+
         return {
-            'migration_id': self.migration_id,
-            'transformer_name': self.__class__.__name__,
-            'duration_seconds': duration,
-            'status': 'completed' if not self.errors else 'failed',
-            'statistics': dict(self.stats),
-            'errors': self.errors,
-            'warnings': self.warnings,
-            'performance_report': self.get_performance_report(),
-            'timestamp': datetime.now()
+            "migration_id": self.migration_id,
+            "transformer_name": self.__class__.__name__,
+            "duration_seconds": duration,
+            "status": "completed" if not self.errors else "failed",
+            "statistics": dict(self.stats),
+            "errors": self.errors,
+            "warnings": self.warnings,
+            "performance_report": self.get_performance_report(),
+            "timestamp": datetime.now(),
         }
