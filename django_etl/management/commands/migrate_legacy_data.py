@@ -10,6 +10,7 @@ from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
 from django.apps import apps
 from django_etl.discovery import discover_transformers
+from django_etl.config import ETLConfigManager
 
 try:
     # Try to import MigrationLog from the project
@@ -103,17 +104,62 @@ class Command(BaseCommand):
     def discover_transformers_from_apps(self, transformer_paths=None):
         """Discover transformers from Django apps"""
         if transformer_paths:
+            # Use paths provided via command line
             base_paths = [path.strip() for path in transformer_paths.split(",")]
         else:
-            # Auto-discover from installed apps
-            base_paths = []
-            for app_config in apps.get_app_configs():
-                potential_paths = [
-                    f"{app_config.name}.transformers",
-                    f"{app_config.name}.etl",
-                    f"{app_config.name}.migrations.transformers",
-                ]
-                base_paths.extend(potential_paths)
+            # First try to get configured paths from Django settings
+            config_manager = ETLConfigManager()
+            configured_paths = config_manager.get_transformer_discovery_paths()
+
+            if configured_paths:
+                base_paths = configured_paths
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"Using configured transformer paths: {', '.join(configured_paths)}"
+                    )
+                )
+            else:
+                # Only fall back to auto-discovery if no paths are configured
+                # and limit to apps that might actually have transformers
+                base_paths = []
+
+                # Look for apps that are likely to have transformers
+                # (avoiding Django contrib apps and third-party packages)
+                for app_config in apps.get_app_configs():
+                    app_name = app_config.name
+
+                    # Skip Django contrib apps and common third-party packages
+                    if (
+                        not app_name.startswith("django.contrib.")
+                        and not app_name.startswith("rest_framework")
+                        and not app_name.startswith("drf_")
+                        and not app_name.startswith("corsheaders")
+                        and app_name != "django_etl"  # Skip ourselves
+                        and (
+                            app_name.startswith("apps.")  # Project apps
+                            or app_name.startswith("core")  # Core app
+                            or "." not in app_name  # Top-level apps
+                        )
+                    ):
+                        potential_paths = [
+                            f"{app_name}.transformers",
+                            f"{app_name}.etl.transformers",
+                        ]
+                        base_paths.extend(potential_paths)
+
+                if base_paths:
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f"No transformer paths configured. Auto-discovering from: {', '.join(base_paths)}"
+                        )
+                    )
+                else:
+                    self.stdout.write(
+                        self.style.ERROR(
+                            "No transformer paths found. Please configure TRANSFORMER_DISCOVERY_PATHS in your Django settings."
+                        )
+                    )
+                    return {}
 
         try:
             return discover_transformers(base_paths)
