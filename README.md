@@ -288,6 +288,7 @@ Tested on healthcare datasets:
 - **Financial Systems** - Transaction and account migrations  
 - **Educational Systems** - Student and course data migrations
 
+<!--
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -298,7 +299,7 @@ Tested on healthcare datasets:
 6. Commit your changes (`git commit -m 'Add amazing feature'`)
 7. Push to the branch (`git push origin feature/amazing-feature`)
 8. Open a Pull Request
-
+-->
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -315,7 +316,7 @@ For questions, issues, or contributions:
 
 - **Create an Issue**: For bugs or feature requests
 - **Start a Discussion**: For questions or ideas  
-- **Email**: etl-support@yourcompany.com
+<!-- - **Email**: etl-support@yourcompany.com -->
 
 ---
 
